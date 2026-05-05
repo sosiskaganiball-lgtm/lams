@@ -1,0 +1,152 @@
+const express = require('express');
+const session = require('express-session');
+const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcrypt');
+const path = require('path');
+const crypto = require('crypto');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(express.json());
+app.use(express.static('public'));
+app.use(session({
+  secret: 'lamsvpn_super_secret_key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 } // 24 часа
+}));
+
+// Инициализация базы данных
+const db = new sqlite3.Database('./lamsvpn.db');
+db.run(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    email TEXT UNIQUE,
+    password TEXT,
+    tariff TEXT,
+    config TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+// Вспомогательная функция для генерации VLESS конфига
+function generateVlessConfig(username) {
+  const uuid = crypto.randomUUID();
+  // демонстрационный адрес сервера (Москва)
+  const serverAddr = 'msk.lamsvpn.example.com';
+  const port = 443;
+  const sni = 'msk.lamsvpn.example.com';
+  return `vless://${uuid}@${serverAddr}:${port}?encryption=none&security=tls&sni=${sni}&fp=chrome&type=tcp&headerType=none#LamsVPN-${username}`;
+}
+
+// API: регистрация
+app.post('/api/register', async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: 'Заполните все поля' });
+  }
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    db.run('INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+      [username, email, hashedPassword],
+      function(err) {
+        if (err) {
+          if (err.message.includes('UNIQUE')) return res.status(400).json({ error: 'Пользователь с таким email или именем уже существует' });
+          return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+        res.json({ success: true, userId: this.lastID });
+      });
+  } catch (err) {
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+// API: логин
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Введите email и пароль' });
+  }
+  db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
+    if (err || !user) {
+      return res.status(401).json({ error: 'Неверный email или пароль' });
+    }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: 'Неверный email или пароль' });
+    }
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    res.json({ success: true, username: user.username, tariff: user.tariff, hasConfig: !!user.config });
+  });
+});
+
+// API: выход
+app.post('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.json({ success: true });
+});
+
+// Middleware проверки авторизации
+function requireAuth(req, res, next) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Не авторизован' });
+  }
+  next();
+}
+
+// API: получить информацию о текущем пользователе
+app.get('/api/me', requireAuth, (req, res) => {
+  db.get('SELECT id, username, email, tariff, config FROM users WHERE id = ?',
+    [req.session.userId],
+    (err, user) => {
+      if (err || !user) return res.status(404).json({ error: 'Пользователь не найден' });
+      res.json({ username: user.username, email: user.email, tariff: user.tariff, hasConfig: !!user.config });
+    });
+});
+
+// API: покупка тарифа (basic / family)
+app.post('/api/purchase', requireAuth, (req, res) => {
+  const { tariff } = req.body;
+  if (tariff !== 'basic' && tariff !== 'family') {
+    return res.status(400).json({ error: 'Неверный тариф' });
+  }
+  // Генерируем новый конфиг (при каждой покупке обновляем)
+  const newConfig = generateVlessConfig(req.session.username);
+  db.run('UPDATE users SET tariff = ?, config = ? WHERE id = ?',
+    [tariff, newConfig, req.session.userId],
+    function(err) {
+      if (err) return res.status(500).json({ error: 'Ошибка обновления тарифа' });
+      res.json({ success: true, tariff, config: newConfig, message: 'Тариф активирован!' });
+    });
+});
+
+// API: получить конфиг текущего пользователя
+app.get('/api/config', requireAuth, (req, res) => {
+  db.get('SELECT config FROM users WHERE id = ?', [req.session.userId], (err, row) => {
+    if (err || !row || !row.config) {
+      return res.status(404).json({ error: 'Конфигурация не найдена. Сначала приобретите тариф.' });
+    }
+    res.json({ config: row.config });
+  });
+});
+
+// Список серверов (статический)
+app.get('/api/servers', (req, res) => {
+  res.json({
+    servers: [
+      { country: '🇷🇺 Москва', bypass: true, location: 'Москва, М9' },
+      { country: '🇺🇸 Шарлотт', bypass: false, location: 'Северная Каролина' },
+      { country: '🇸🇪 Стокгольм', bypass: false, location: 'Швеция, STO1' },
+      { country: '🇫🇮 Хельсинки', bypass: true, location: 'Финляндия, HEL2' }
+    ]
+  });
+});
+
+// Запуск сервера
+app.listen(PORT, () => {
+  console.log(`LamsVPN server running on http://localhost:${PORT}`);
+});

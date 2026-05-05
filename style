@@ -1,0 +1,408 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a0a;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+}
+
+.app-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 1px solid #2a2a2a;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #fff, #aaa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+nav {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.nav-btn:hover, .nav-btn.active {
+  background: #2a2a2a;
+  color: white;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.gray-btn {
+  background: #2c2c2c;
+  border: none;
+  color: #e0e0e0;
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+  font-size: 0.9rem;
+}
+
+.gray-btn:hover {
+  background: #3f3f3f;
+  transform: scale(0.98);
+}
+
+.small {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+#userInfo {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  background: #1a1a1a;
+  padding: 0.2rem 1rem 0.2rem 1.2rem;
+  border-radius: 40px;
+}
+
+#usernameDisplay {
+  font-weight: bold;
+  color: #ddd;
+}
+
+/* Секции */
+.section {
+  display: none;
+  animation: fade 0.3s ease;
+}
+
+.section.active {
+  display: block;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(5px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+h1, h2, h3 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 2rem;
+  border-left: 4px solid #6c6c6c;
+  padding-left: 1rem;
+}
+
+/* Герой */
+.hero {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: radial-gradient(circle at 10% 30%, #121212, #030303);
+  border-radius: 32px;
+  margin-bottom: 3rem;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, #fff, #aaa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #aaa;
+}
+
+/* Карточки преимуществ */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: #111;
+  padding: 1.5rem;
+  border-radius: 24px;
+  text-align: center;
+  width: 220px;
+  border: 1px solid #252525;
+}
+
+.feature-card i {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #aaa;
+}
+
+/* Тарифы */
+.tariff-cards {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.tariff-card {
+  background: #111;
+  border: 1px solid #2c2c2c;
+  border-radius: 32px;
+  padding: 2rem;
+  width: 300px;
+  transition: 0.2s;
+}
+
+.tariff-card.featured {
+  border-color: #6c6c6c;
+  transform: scale(1.02);
+  background: #151515;
+}
+
+.tariff-card h3 {
+  font-size: 1.8rem;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+.price span {
+  font-size: 1rem;
+  font-weight: normal;
+  color: #888;
+}
+
+.tariff-card ul {
+  list-style: none;
+  margin: 1rem 0;
+}
+
+.tariff-card li {
+  margin: 0.6rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tariff-card li i {
+  color: #6c6c6c;
+  width: 20px;
+}
+
+/* Серверы */
+.servers-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.server-card {
+  background: #141414;
+  padding: 1rem 1.5rem;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+  border: 1px solid #2a2a2a;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+}
+
+.badge.bypass {
+  background: #2a5f2a;
+  color: #a0f0a0;
+}
+
+.badge.normal {
+  background: #3a3a3a;
+  color: #ccc;
+}
+
+.servers-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #333;
+  font-style: italic;
+  color: #aaa;
+}
+
+/* FAQ */
+.faq-item {
+  background: #0f0f0f;
+  margin-bottom: 1rem;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #222;
+}
+
+.faq-question {
+  padding: 1rem 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  background: #151515;
+  transition: 0.2s;
+}
+
+.faq-question:hover {
+  background: #1f1f1f;
+}
+
+.faq-answer {
+  padding: 0 1.5rem 1rem 1.5rem;
+  color: #bbb;
+  display: none;
+}
+
+.faq-item.open .faq-answer {
+  display: block;
+}
+
+/* Поддержка */
+#support {
+  text-align: center;
+}
+
+.telegram-link {
+  display: inline-block;
+  margin-top: 1rem;
+  text-decoration: none;
+  font-size: 1.2rem;
+  padding: 0.7rem 1.8rem;
+}
+
+/* Модалки */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #111;
+  border-radius: 32px;
+  width: 90%;
+  max-width: 600px;
+  padding: 2rem;
+  position: relative;
+  border: 1px solid #333;
+}
+
+.close, .close-config {
+  position: absolute;
+  right: 1.5rem;
+  top: 1rem;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close:hover, .close-config:hover {
+  color: white;
+}
+
+.config-box {
+  background: #1a1a1a;
+  padding: 1rem;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.config-box code {
+  word-break: break-all;
+  color: #0f0;
+  font-size: 0.8rem;
+  background: #000;
+  padding: 0.5rem;
+  border-radius: 12px;
+  overflow-x: auto;
+  flex: 1;
+}
+
+.instructions {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.instructions ul {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+/* формы */
+input, select {
+  background: #1e1e1e;
+  border: 1px solid #3a3a3a;
+  padding: 0.6rem 1rem;
+  border-radius: 40px;
+  color: white;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.modal-content button {
+  margin-top: 0.5rem;
+}

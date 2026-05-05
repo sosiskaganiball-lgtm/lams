@@ -1,0 +1,192 @@
+// DOM элементы
+const sections = document.querySelectorAll('.section');
+const navBtns = document.querySelectorAll('.nav-btn');
+const loginBtn = document.getElementById('loginBtn');
+const registerBtn = document.getElementById('registerBtn');
+const userInfoDiv = document.getElementById('userInfo');
+const usernameSpan = document.getElementById('usernameDisplay');
+const logoutBtn = document.getElementById('logoutBtn');
+const myConfigBtn = document.getElementById('myConfigBtn');
+const modal = document.getElementById('modal');
+const configModal = document.getElementById('configModal');
+const modalBody = document.getElementById('modal-body');
+const configLinkElem = document.getElementById('configLink');
+const copyConfigBtn = document.getElementById('copyConfigBtn');
+
+let currentUser = null;
+
+// Навигация
+function showSection(sectionId) {
+  sections.forEach(sec => sec.classList.remove('active'));
+  const activeSection = document.getElementById(sectionId);
+  if (activeSection) activeSection.classList.add('active');
+  navBtns.forEach(btn => {
+    if (btn.dataset.section === sectionId) btn.classList.add('active');
+    else btn.classList.remove('active');
+  });
+}
+
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => showSection(btn.dataset.section));
+});
+document.querySelectorAll('[data-section-btn]').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const section = e.currentTarget.dataset.sectionBtn;
+    if (section) showSection(section);
+  });
+});
+
+// FAQ toggle
+document.querySelectorAll('.faq-question').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    item.classList.toggle('open');
+  });
+});
+
+// Auth state update
+async function updateAuthUI() {
+  try {
+    const res = await fetch('/api/me');
+    if (res.ok) {
+      const user = await res.json();
+      currentUser = user;
+      usernameSpan.textContent = user.username;
+      userInfoDiv.style.display = 'flex';
+      loginBtn.style.display = 'none';
+      registerBtn.style.display = 'none';
+    } else {
+      currentUser = null;
+      userInfoDiv.style.display = 'none';
+      loginBtn.style.display = 'inline-block';
+      registerBtn.style.display = 'inline-block';
+    }
+  } catch(e) { console.error(e); }
+}
+
+// Показать модалку регистрации
+function showRegisterModal() {
+  modalBody.innerHTML = `
+    <h3>Регистрация</h3>
+    <div class="form-group"><input type="text" id="regUsername" placeholder="Имя пользователя"></div>
+    <div class="form-group"><input type="email" id="regEmail" placeholder="Email"></div>
+    <div class="form-group"><input type="password" id="regPassword" placeholder="Пароль"></div>
+    <button id="doRegister" class="gray-btn">Зарегистрироваться</button>
+  `;
+  modal.style.display = 'flex';
+  document.getElementById('doRegister').addEventListener('click', async () => {
+    const username = document.getElementById('regUsername').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username, email, password })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert('Регистрация успешна! Теперь войдите.');
+      modal.style.display = 'none';
+      showLoginModal();
+    } else {
+      alert('Ошибка: ' + data.error);
+    }
+  });
+}
+
+function showLoginModal() {
+  modalBody.innerHTML = `
+    <h3>Вход</h3>
+    <div class="form-group"><input type="email" id="loginEmail" placeholder="Email"></div>
+    <div class="form-group"><input type="password" id="loginPassword" placeholder="Пароль"></div>
+    <button id="doLogin" class="gray-btn">Войти</button>
+  `;
+  modal.style.display = 'flex';
+  document.getElementById('doLogin').addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      modal.style.display = 'none';
+      updateAuthUI();
+      alert(`Добро пожаловать, ${data.username}!`);
+      location.reload(); // для обновления интерфейса
+    } else {
+      alert('Ошибка: ' + data.error);
+    }
+  });
+}
+
+// Покупка тарифа
+async function purchaseTariff(tariff) {
+  if (!currentUser) {
+    alert('Сначала войдите в аккаунт');
+    showLoginModal();
+    return;
+  }
+  const res = await fetch('/api/purchase', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ tariff })
+  });
+  const data = await res.json();
+  if (res.ok) {
+    alert(`Тариф ${tariff === 'basic' ? 'Базовый' : 'Семейный'} активирован! Конфиг сгенерирован.`);
+    showConfigModal();
+  } else {
+    alert('Ошибка: ' + data.error);
+  }
+}
+
+async function showConfigModal() {
+  const res = await fetch('/api/config');
+  const data = await res.json();
+  if (res.ok) {
+    configLinkElem.textContent = data.config;
+    configModal.style.display = 'flex';
+  } else {
+    alert(data.error || 'Сначала приобретите тариф');
+  }
+}
+
+copyConfigBtn?.addEventListener('click', () => {
+  navigator.clipboard.writeText(configLinkElem.textContent);
+  alert('Конфиг скопирован!');
+});
+
+// Обработчики событий
+registerBtn.addEventListener('click', showRegisterModal);
+loginBtn.addEventListener('click', showLoginModal);
+logoutBtn?.addEventListener('click', async () => {
+  await fetch('/api/logout', { method: 'POST' });
+  location.reload();
+});
+myConfigBtn?.addEventListener('click', showConfigModal);
+document.querySelectorAll('.buy-tariff').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const tariff = e.currentTarget.dataset.tariff;
+    purchaseTariff(tariff);
+  });
+});
+
+// Закрытие модалок
+document.querySelectorAll('.close, .close-config').forEach(el => {
+  el.addEventListener('click', () => {
+    modal.style.display = 'none';
+    configModal.style.display = 'none';
+  });
+});
+window.onclick = (e) => {
+  if (e.target === modal) modal.style.display = 'none';
+  if (e.target === configModal) configModal.style.display = 'none';
+};
+
+// Загрузить серверы (декоративно, уже есть в разметке, но можно обновить)
+updateAuthUI();
+// Активная секция по умолчанию - home
+showSection('home');

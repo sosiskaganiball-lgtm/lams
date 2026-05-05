@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LamsVPN — безопасный и быстрый VPN</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Шапка -->
+    <header>
+      <div class="logo">LamsVPN</div>
+      <nav>
+        <button class="nav-btn active" data-section="home">Главная</button>
+        <button class="nav-btn" data-section="tariffs">Тарифы</button>
+        <button class="nav-btn" data-section="servers">Серверы</button>
+        <button class="nav-btn" data-section="faq">FAQ</button>
+        <button class="nav-btn" data-section="support">Поддержка</button>
+      </nav>
+      <div class="auth-buttons">
+        <button id="loginBtn" class="gray-btn"><i class="fas fa-sign-in-alt"></i> Вход</button>
+        <button id="registerBtn" class="gray-btn"><i class="fas fa-user-plus"></i> Регистрация</button>
+        <div id="userInfo" style="display: none;">
+          <span id="usernameDisplay"></span>
+          <button id="logoutBtn" class="gray-btn small">Выйти</button>
+          <button id="myConfigBtn" class="gray-btn small">Мой конфиг</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Основное содержимое -->
+    <main id="content">
+      <!-- Секция Главная -->
+      <section id="home" class="section active">
+        <div class="hero">
+          <h1>LamsVPN</h1>
+          <p>Скорость, приватность и свобода в интернете</p>
+          <button class="gray-btn cta" data-section-btn="tariffs">Выбрать тариф</button>
+        </div>
+        <div class="features">
+          <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Обход блокировок</h3>
+            <p>Работаем даже в самых строгих сетях</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-tachometer-alt"></i>
+            <h3>Высокая скорость</h3>
+            <p>Выделенные серверы 1 Гбит/с</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-globe"></i>
+            <h3>4+ локации</h3>
+            <p>Постоянно расширяем географию</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Секция Тарифы -->
+      <section id="tariffs" class="section">
+        <h2>Тарифы</h2>
+        <div class="tariff-cards">
+          <div class="tariff-card">
+            <h3>Базовый</h3>
+            <div class="price">499 ₽<span>/мес</span></div>
+            <ul>
+              <li><i class="fas fa-check"></i> До 3 устройств</li>
+              <li><i class="fas fa-check"></i> Обход белых списков</li>
+              <li><i class="fas fa-check"></i> Безлимитный трафик</li>
+              <li><i class="fas fa-check"></i> Поддержка 24/7</li>
+            </ul>
+            <button class="gray-btn buy-tariff" data-tariff="basic">Выбрать</button>
+          </div>
+          <div class="tariff-card featured">
+            <h3>Семейный</h3>
+            <div class="price">899 ₽<span>/мес</span></div>
+            <ul>
+              <li><i class="fas fa-check"></i> До 6 устройств</li>
+              <li><i class="fas fa-check"></i> Обход белых списков</li>
+              <li><i class="fas fa-check"></i> Приоритетная поддержка</li>
+              <li><i class="fas fa-check"></i> Дополнительный слой шифрования</li>
+            </ul>
+            <button class="gray-btn buy-tariff" data-tariff="family">Выбрать</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Секция Серверы -->
+      <section id="servers" class="section">
+        <h2>Наши серверы</h2>
+        <div class="servers-list">
+          <div class="server-card"><span>🇷🇺 Москва</span><span class="badge bypass">Обход белых списков</span></div>
+          <div class="server-card"><span>🇺🇸 Шарлотт</span><span class="badge normal">Обычный</span></div>
+          <div class="server-card"><span>🇸🇪 Стокгольм</span><span class="badge normal">Обычный</span></div>
+          <div class="server-card"><span>🇫🇮 Хельсинки</span><span class="badge bypass">Обход белых списков</span></div>
+        </div>
+        <div class="servers-footer">🚀 Список серверов будет пополняться! Следующие локации: 🇳🇱 Амстердам, 🇩🇪 Франкфурт</div>
+      </section>
+
+      <!-- Секция FAQ -->
+      <section id="faq" class="section">
+        <h2>Часто задаваемые вопросы</h2>
+        <div class="faq-item">
+          <div class="faq-question">Как получить конфиг после оплаты?</div>
+          <div class="faq-answer">После выбора тарифа в личном кабинете появится кнопка «Мой конфиг» — там будет ваша персональная ссылка и инструкция.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Сколько устройств можно подключить?</div>
+          <div class="faq-answer">Базовый — до 3, Семейный — до 6 устройств одновременно.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Работает ли в Китае / России с блокировками?</div>
+          <div class="faq-answer">Да, серверы Москва и Хельсинки используют технологию обхода DPI и белых списков.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Как подключить конфиг на iPhone?</div>
+          <div class="faq-answer">Скачайте приложение Shadowrocket или Streisand, нажмите на ссылку с конфигом — он импортируется автоматически. Подробная инструкция появится после активации тарифа.</div>
+        </div>
+      </section>
+
+      <!-- Секция Поддержка (ссылка на Telegram) -->
+      <section id="support" class="section">
+        <h2>Поддержка</h2>
+        <p>Есть вопросы? Напишите нам в Telegram, мы ответим в течение 15 минут.</p>
+        <a href="https://t.me/lamssupport" target="_blank" class="gray-btn telegram-link"><i class="fab fa-telegram"></i> @lamssupport</a>
+      </section>
+    </main>
+
+    <!-- Модальные окна -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <div id="configModal" class="modal">
+      <div class="modal-content config-modal">
+        <span class="close-config">&times;</span>
+        <div id="configModalBody">
+          <h3>📱 Ваш персональный конфиг</h3>
+          <p>Скопируйте ссылку ниже и добавьте в ваш VPN-клиент (V2Ray, Shadowrocket, Hiddify, NekoBox).</p>
+          <div class="config-box">
+            <code id="configLink"></code>
+            <button id="copyConfigBtn" class="gray-btn small"><i class="fas fa-copy"></i> Копировать</button>
+          </div>
+          <div class="instructions">
+            <h4>📖 Инструкция по подключению:</h4>
+            <ul>
+              <li><strong>Windows / Android / Linux:</strong> Используйте V2RayN, NekoRay или Hiddify. Нажмите «Импорт из буфера» — конфиг добавится автоматически.</li>
+              <li><strong>macOS / iOS:</strong> Рекомендуем Shadowrocket или Streisand. Откройте приложение, нажмите + и выберите «Импорт по ссылке» → вставьте скопированную VLESS-ссылку.</li>
+              <li><strong>Роутеры (OpenWrt/Keenetic):</strong> Используйте PassWall или Xray, вставьте конфиг вручную.</li>
+            </ul>
+            <p>🔒 Ваш конфиг уникален и привязан к аккаунту. Не передавайте его третьим лицам.</p>
+            <p>🌍 Актуальные серверы: Москва (обход), Хельсинки (обход), Шарлотт, Стокгольм.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
